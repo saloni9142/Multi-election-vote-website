@@ -1,7 +1,7 @@
 :root {
   --color-primary: rgba(130, 177, 244, 1);
   --color-primary-variant: rgba(49, 224, 251, 1);
-  --color-gray-0: #fff;
+  --color-gray-0: #faf2f2ff;
   --color-gray-100: #fff;
   --color-gray-200: #f1fdd0dd;
   --color-gray-300: #bbb;
@@ -29,6 +29,18 @@
   text-decoration: none;
   border: 0;
   box-sizing: border-box;
+}
+.dark {
+  --color-gray-0: #1e1b1bff;
+  --color-gray-100: #fff;
+  --color-gray-200: #f1fdd0dd;
+  --color-gray-300: #bbb;
+  --color-gray-400: #999;
+  --color-gray-500: #777;
+  --color-gray-600: #555;
+  --color-gray-700: #333;
+  --color-gray-800: #111;
+  --color-gray-900: #faebebff;
 }
 body {
   font-family: sans-serif;
@@ -147,7 +159,7 @@ nav {
 .nav_container {
   display: flex;
   align-items: center;
-  justify-content: sapce-between;
+  justify-content: space-between;
 }
 .nav_container div {
   display: flex;
@@ -165,24 +177,64 @@ nav {
 }
 
 .nav_container a {
-  transition: var (--transition);
+  transition: var(--transition);
 }
 .nav_container a:hover {
   color: var(--color-primary-variant);
 }
 
-.nav_containermenu {
+.nav_container menu {
   display: flex;
-  aling-items: center;
+  align-items: center;
   gap: 4rem;
 }
-.theme-toggle-btn {
+.theme_toggle-btn {
   background: transparent;
   font-size: 1.5rem;
   transition: var(--transition);
 }
 .theme_toggle-btn:hover {
   opacity: 0.75;
+}
+
+/* register */
+.register {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+.register_container {
+  width: 35rem;
+  background: var(--color-gray-0);
+  padding: 3rem;
+  border-radius: var(--radius-5);
+}
+
+.register_container h2 {
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+}
+
+.register form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.register form input {
+  padding: 0.7rem;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-1);
+  color: var(--color-gray-900);
+}
+
+.register form p > a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.form_error-message {
+  background: var(--color-danger);
+  color: var(--color-gray-0);
 }
 
 /* media queries(small screen) */
@@ -215,5 +267,13 @@ nav {
     display: grid;
     place-items: center;
     height: 4rem;
+    box-shadow: -2rem 4rem 2rem rgba(0, 0, 0, 0.1);
+  }
+  .errorPage_container {
+    width: 100%;
+  }
+
+  .register_container {
+    padding: 3 rem 1.5rem;
   }
 }
