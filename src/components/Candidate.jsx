@@ -1,6 +1,20 @@
 import React from 'react'
+import { useDispatch } from 'react-redux';
+import { uiActions} from '../store/ui-slice'
+import { voteActions } from '../store/vote-slice';
+
 
 const Candidate = ({ image, id, fullName, motto }) => {
+
+
+  const dispatch = useDispatch();
+// open confirm vote modal
+    const openCandidateModal=() =>{
+      dispatch(uiActions.openVoteCandidateModal())
+      dispatch(voteActions.changeSelectedVoteCandidate(id))
+
+    }
+
   return (
     <article className='candidate'>
       <div className='candidate_image'>
@@ -16,9 +30,9 @@ const Candidate = ({ image, id, fullName, motto }) => {
           ? motto.substring(0, 25) + "..."  
           : motto}
       </small>
-      <button className='btn primary'>Vote</button>
+      <button className='btn primary' onClick={openCandidateModal}>Vote</button>
     </article>
   )
 }
 
-export default Candidate  
+export default Candidate
