@@ -12,7 +12,7 @@ const Election=({id, title, description, thumbnail})=> {
         <Link to={`/elections/${id}`}><h4>{title}</h4></Link>
         <p>{description?.length> 255? description.substring(0,255)+ "...": description}</p>
         <div className='election_cta'>
-            <Link to={`eletions/${id}`} className="btn sm">View</Link>
+            <Link to={`/elections/${id}`} className="btn sm">View</Link>
             <button className='btn sm primary'>edit</button>
         </div>
     </div>
