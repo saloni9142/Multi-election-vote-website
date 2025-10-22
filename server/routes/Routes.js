@@ -3,29 +3,31 @@ const{registerVoter, loginVoter,getVoter} =require("../controllers/voterControll
 const {addElection,getElection,getElections,updateElection,removeElection,getCandidatesOfElection,getElectionVoters}= require("../controllers/electionController")
 
 const {addCandidate,getCandidate,removeCandidate,voteCandidate} =require("../controllers/candidateController")
+const authMiddleware = require("../middleware/authMiddleware")
+
 const router= Router()
 
 // !voters
 router.post('/voters/register', registerVoter);
 router.post('/voters/login', loginVoter);
-router.get('/voters/:id', getVoter);
+router.get('/voters/:id',authMiddleware, getVoter);
 
 // !election
-router.post('/elections', addElection)
-router.get('/elections', getElections)
-router.post('/elections/:id', getElection)
-router.delete('/elections/:id', removeElection)
-router.patch('/elections/:id', updateElection)
+router.post('/elections',authMiddleware, addElection)
+router.get('/elections',authMiddleware, getElections)
+router.post('/elections/:id',authMiddleware, getElection)
+router.delete('/elections/:id',authMiddleware, removeElection)
+router.patch('/elections/:id',authMiddleware, updateElection)
 router.get('/elections/:id/candidates', getCandidatesOfElection)
-router.get('/elections/:id/voters', getElectionVoters)
+router.get('/elections/:id/voters',authMiddleware, getElectionVoters)
 
 
 
 // !candidate
-router.post('/candidates', addCandidate)
-router.get('/candidates/:id', getCandidate)
-router.delete('/candidates/:id', removeCandidate)
-router.patch('/candidates/:id', voteCandidate)
+router.post('/candidates',authMiddleware, addCandidate)
+router.get('/candidates/:id',authMiddleware, getCandidate)
+router.delete('/candidates/:id',authMiddleware, removeCandidate)
+router.patch('/candidates/:id', authMiddleware,voteCandidate)
 
 
 
