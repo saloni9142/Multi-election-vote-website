@@ -168,20 +168,24 @@ const voteCandidate= async(req, res,next)=>{
         const {id: candidateId} =req.params;
         const {currentVoterId, selectedElection} = req.body;
         // get the candidate
-        const candiadte= await CandidateModel.findById(newCandidateId);
+        const candiadte= await CandidateModel.findById(candidateId);
         const newVoteCount =candiadte.voteCount +1;
         // update candiate votes
         await CandidateModel.findByIdAndUpdate(candidateId,{voteCount: newVoteCount}, {new:true})
-        // start session for relationship
+        // start session for relationship between voter and election
         const sess= await mongoose.startSession()
         sess.startTransaction();
         // get the current voter
-        let voter = await VoterModel.finedById(currentVoterId)
+        let voter = await VoterModel.finedById(req.user.id)
         await voter.save({session: sess})
-        // get selected eelction
+        // get selected election
         let election = await ElectionModel.findById(selectedElection);
         election.voters.push(voter);
         voter.votedElections.push(election);
+        await election.save({session:sess})
+        await voter.save({session: sess})
+        await sess.commitTransaction();
+        res.status(200).json("voted casted successfully")
 
     } catch{
         return next(new HttpError(error))

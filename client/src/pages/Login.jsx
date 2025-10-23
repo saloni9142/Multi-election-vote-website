@@ -1,29 +1,50 @@
 import React, { useState } from 'react'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios  from 'axios'
+import {useDispatch} from "react-redux"
+import { voteActions } from '../store/vote-slice';
 
 const Login=()=> {
-  const [userData, setUserData]=useState({fullname: "", email: "",password:"",password2:""})
+  const [userData, setUserData]=useState({fullName: "", email: "",password:"",password2:""})
+  const [error, setError] =useState("")
+
+const dispatch = useDispatch()
+const navigate = useNavigate()
+
   // function to change controlled inputs
   const changeInputHandler=(e)=>{
     setUserData(prevState=>{
       return {...prevState, [e.target.name]:e.target.value}
     })
   }
-  console.log(userData);
   
+  
+const loginVoter = async(e) =>{
+ e.preventDefault();
+  try{
+    const response=   await axios.post(`${process.env.REACT_APP_API_URL}/voters/login`,userData)
+          const newVoter = await response.data;
+          // save new voter in local storage and update in redux store
+          localStorage.setItem("currentUser", JSON.stringify(newVoter))
+          dispatch(voteActions.changeCurrentVoter(newVoter))
+          navigate("/results")
+  } catch(error){
+    setError(error.response.data.message)
 
+  }
+}
   
   return (
     <section className='register'>
       <div className='container register_container'>
         <h2>Sign In</h2>
-        <form action="">
-          <p className='form_error-message'>Any error from the backend</p>
+        <form onSubmit={loginVoter}>
+{error &&<p className='form_error-message'>{error}</p>}
           
           <input type="email" name='email' placeholder='Email Address' onChange={changeInputHandler} autoComplete='true'  />
-          <input type="password" name='password' placeholder='Password'onChange={changeInputHandler}  autoComplete='true'  />
+          <input type="password" name='password' placeholder='Password'onChange={changeInputHandler}  autoComplete='true' autoFocus  />
          
-          <p>Already have an account? <Link to='/'>sign up</Link></p>
+          <p> Don't have an account? <Link to='/register'>sign up</Link></p>
           <button  type='submit' className="btn primary">Login</button>
         </form>
       </div>

@@ -1,6 +1,6 @@
 import {createSlice,current} from "@reduxjs/toolkit";
 
-const currentVoter ={id: "v1" ,token: "sfsdfdfsd", isAdmin:true}
+const currentVoter ={id: "" ,token: "", isAdmin:false}
 const initialState={selectedVoteCandidate: "" ,currentVoter, selectedElection:"", idOfelectionToUpdate:"",
     addCandidateElectionId:""}
  
@@ -10,6 +10,9 @@ const initialState={selectedVoteCandidate: "" ,currentVoter, selectedElection:""
         reducers: {
             changeSelectedVoteCandidate(state,action){
                 state.selectedVoteCandidate=action.payload;
+              },
+              changeCurrentVoter(state,action){
+                state.currentVoter= action.payload;
               },
               changeSelectedElection(state,action){
                 state.selectedElection=action.payload;

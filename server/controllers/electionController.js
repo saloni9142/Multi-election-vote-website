@@ -38,13 +38,13 @@ const addElection= async(req, res,next)=>{
     fileName = fileName.split(".")
     fileName= fileName[0] + uuid() +"." +fileName[fileName.length - 1]
     // upload file  to uploads folder in project
-    await thumbnail.mv(path.join(__dirname, ".", 'uploads', fileName), 
+ thumbnail.mv(path.join(__dirname, ".", 'uploads', fileName), 
     async (err) =>{
         if(err){
             return next(new HttpError(err))
         }
         // store image on cloudinary
-        const result = await cloudinary.uploader.upload(path.join(__dirname, "..",
+        const result = await cloudinary.uploader.upload(path.join(__dirname, ".",
             "uploads", fileName),{resource_type:"image"})
             if(!result.secure_url){
                 return next(new HttpError("could upload image to cloudinary",422))
