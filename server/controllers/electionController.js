@@ -71,9 +71,15 @@ const addElection= async(req, res,next)=>{
 // protected (only admin)
 const getElections= async(req, res,next)=>{
     try{
+        console.log("========= getElections called =========");
+        console.log("User:", req.user);
         const elections = await ElectionModel.find();
+        console.log("Elections found:", elections.length);
+        console.log("Elections data:", elections);
+        
         res.status(200).json(elections)
     } catch(error){
+        console.error("Error in getElections:", error);
         return next(new HttpError(error))
     }
 }
@@ -85,7 +91,7 @@ const getElections= async(req, res,next)=>{
 const getElection= async(req, res,next)=>{
     try{
         const {id} = req.params;
-        const election = await ElectionModel.findById(id)
+        const election = await ElectionModel.findById(id);
         res.status(200).json(election)
     } catch(error){
         return next(new HttpError(error))

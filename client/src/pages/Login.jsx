@@ -22,6 +22,7 @@ const navigate = useNavigate()
 const loginVoter = async(e) =>{
  e.preventDefault();
   try{
+    
     const response=   await axios.post(`${process.env.REACT_APP_API_URL}/voters/login`,userData)
           const newVoter = await response.data;
           // save new voter in local storage and update in redux store
@@ -42,7 +43,7 @@ const loginVoter = async(e) =>{
 {error &&<p className='form_error-message'>{error}</p>}
           
           <input type="email" name='email' placeholder='Email Address' onChange={changeInputHandler} autoComplete='true'  />
-          <input type="password" name='password' placeholder='Password'onChange={changeInputHandler}  autoComplete='true' autoFocus  />
+          <input type="password" name='password' placeholder='Password'onChange={changeInputHandler}  autoComplete='true' autoFocus   />
          
           <p> Don't have an account? <Link to='/register'>sign up</Link></p>
           <button  type='submit' className="btn primary">Login</button>

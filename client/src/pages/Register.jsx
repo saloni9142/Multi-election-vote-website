@@ -34,7 +34,7 @@ const registerVoter= async(e)=>{
           <input type="email" name='email' placeholder='Email Address' onChange={changeInputHandler} autoComplete='true' autoFocus />
           <input type="password" name='password' placeholder='Password'onChange={changeInputHandler}  autoComplete='true'  />
           <input type="password" name='password2' placeholder='Confirm Password' onChange={changeInputHandler} autoComplete='true'  />
-          <p>Already have an account? <Link to='/'>sign in</Link></p>
+          <p>Already have an account? <Link to='/login'>sign in</Link></p>
           <button  type='submit' className="btn primary">Register</button>
         </form>
       </div>

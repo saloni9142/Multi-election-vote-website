@@ -26,7 +26,7 @@ if((password.trim().length) <6){
 }
 
 // make sure paswords match
-if(password  !== password2){
+if(password  != password2){
       return next(new HttpError("password do not match.",422))
 }
 // hash password
@@ -73,7 +73,7 @@ const loginVoter = async(req, res,next)=>{
         return next(new HttpError("invalid credentials",422))
     }
     // compare passwords
-    const comparePass= await bcrypt.compare(password, voter.password)
+    const comparePass=  await bcrypt.compare(password, voter.password)
     if(!comparePass){
         return next(new HttpError("Invalid credentials",422))
     }
@@ -100,7 +100,7 @@ const getVoter = async(req, res,next)=>{
         res.json(voter)
 
     } catch(error){
-        return next (HttpError("could not get the voter"))
+        return next (HttpError("could not get the voter",404))
     }
 }
 
