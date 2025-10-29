@@ -176,7 +176,7 @@ const voteCandidate= async(req, res,next)=>{
         const sess= await mongoose.startSession()
         sess.startTransaction();
         // get the current voter
-        let voter = await VoterModel.finedById(req.user.id)
+        let voter = await VoterModel.findById(req.user.id)
         await voter.save({session: sess})
         // get selected election
         let election = await ElectionModel.findById(selectedElection);
@@ -185,9 +185,9 @@ const voteCandidate= async(req, res,next)=>{
         await election.save({session:sess})
         await voter.save({session: sess})
         await sess.commitTransaction();
-        res.status(200).json("voted casted successfully")
+        res.status(200).json(voter.votedElections)
 
-    } catch{
+    } catch(error){
         return next(new HttpError(error))
     }
     

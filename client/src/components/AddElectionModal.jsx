@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { IoMdClose } from 'react-icons/io'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { uiActions } from '../store/ui-slice'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 
-const AddElectionModal = ({ onClose }) => {
+const AddElectionModal = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [thumbnail, setThumbnail] = useState("")
+    const [thumbnail, setThumbnail] = useState(null)
+
 
     const dispatch=useDispatch()
+    const navigate= useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -20,7 +24,24 @@ const AddElectionModal = ({ onClose }) => {
     // close add election modal
     const closeModal =() =>{
         dispatch(uiActions.closeElectionModal())
+ }
+      const token = useSelector(state=> state?.vote?.currentVoter?.token)
+    const createElection = async(e)=>{
+        e.preventDefault()
+        try{
+          console.log("Token value:", token);
+                  const electionData= new  FormData()
+                  electionData.append('title', title)
+                  electionData.append('description', description)
+                  electionData.append('thumbnail', thumbnail)
+                  const response = await axios.post(`${process.env.REACT_APP_API_URL}/elections`,electionData,{withCredentials: true,
+          headers: {Authorization :`Bearer ${token}`} })
+            closeModal()
+            navigate(0)
 
+        } catch(error){
+            console.log(error)
+        }
     }
 
     return (
@@ -32,7 +53,7 @@ const AddElectionModal = ({ onClose }) => {
                         <IoMdClose/>
                     </button>
                 </header>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={createElection}>
                     <div>
                         <h6>election title: </h6>
                         <input 

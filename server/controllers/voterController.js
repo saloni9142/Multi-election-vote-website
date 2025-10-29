@@ -44,7 +44,7 @@ res.status(201).json(`New voter ${fullName} created.`)
 
 
     } catch (error){
-        console.log("error details: error");
+        console.log("error details:", error);
         console.log("Error message:", error.message); 
 return next(new HttpError("voter registration failed.",422))
 }

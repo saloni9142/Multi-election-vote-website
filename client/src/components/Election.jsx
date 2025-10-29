@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { uiActions } from '../store/ui-slice'
 
 
-const Election=({id, title, description, thumbnail})=> {
+const Election=({_id: id, title, description, thumbnail})=> {
     const dispatch= useDispatch()
 
     // open update election modal

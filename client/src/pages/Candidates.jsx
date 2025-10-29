@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {  candidates as dummyCandidates } from '../data'
+
 import { useParams } from 'react-router-dom'
 import Candidate from '../components/Candidate'
 import ConfirmVote from '../components/ConfirmVote'
@@ -13,7 +13,8 @@ const Candidates=()=> {
 
   const voteCandidateModalShowing= useSelector(state=> state.ui.voteCandidateModalShowing)
   const token = useSelector(state=> state?.vote?.currentVoter?.token)
-  const votedElections = useSelector(state => state?.vote?.currentVoter?.votedElections)
+  const voterId = useSelector(state => state?.vote?.currentVoter?.id)
+  const voteElections = useSelector(state => state?.vote?.currentVoter?.id.voterElections)
   // get candidtes that belong to the elctions
   const getCandidates = async() =>{
     try{
@@ -27,14 +28,27 @@ const Candidates=()=> {
     }
   }
 
-  useEffect(()=>{
+  
+
+    const getVoter = async()=>{
+      try{
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/voters/
+          ${voterId}`,{withCredentials:true, headers:{Authorization:`Bearer ${token}`}})
+          const votedElections= await response.data.votedElections;
+          if(votedElections.includes(selectedElection)){
+            setCanVote(false)
+          }
+      } catch (error){
+        console.log(error)
+      }
+    }
+    useEffect(()=>{
     getCandidates()
-
-  },[])
-  if(votedElections.includes(selectedElection)){
-    setCanVote(false);
-
-  }
+    getVoter()
+    // if(votedElections.includes(selectedElection)){
+    //         setCanVote(false)
+    //       }
+    },[])
 
   return (
   <>
@@ -70,7 +84,7 @@ const Candidates=()=> {
         </>
       )}
     </section>
-    {voteCandidateModalShowing && <ConfirmVote />}
+    {voteCandidateModalShowing && <ConfirmVote selectedElection={selectedElection}/>}
   </>
 )
 }

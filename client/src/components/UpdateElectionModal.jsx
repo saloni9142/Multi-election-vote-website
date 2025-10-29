@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
 import { IoMdClose } from 'react-icons/io'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { uiActions } from '../store/ui-slice'
+import axios from 'axios'
 
 
-const UpdateElectionModal = ({onClose}) => {
+const UpdateElectionModal = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [thumbnail, setThumbnail] = useState("")
 
     const dispatch=useDispatch()
-    // close update election modal
-    
+        const idOfElectionToUpdate = useSelector(state => state?.vote?.idOfElectionToUpdate)
 
+    // close update election modal
     const handleSubmit = (e) => {
         e.preventDefault()
         // Add your form submission logic here
@@ -23,6 +24,15 @@ const UpdateElectionModal = ({onClose}) => {
     const closeModal =() =>{
         dispatch(uiActions.closeUpdateElectionModal())
 
+    }
+    const fetchElection= async () =>{
+        try{
+            const response=axios.get(`${process.env.REACT_APP_API_URL}/elections/${idOfElectionToUpdate}`,
+                {withCredentials : true, headers: {Authorization: `Bearer ${token}`}}
+            )
+        } catch(error){
+            console.log(error)
+        }
     }
 
     return (

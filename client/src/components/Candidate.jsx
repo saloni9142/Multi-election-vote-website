@@ -4,7 +4,7 @@ import { uiActions} from '../store/ui-slice'
 import { voteActions } from '../store/vote-slice';
 
 
-const Candidate = ({ image, id, fullName, motto }) => {
+const Candidate = ({ image, _id: id, fullName, motto }) => {
 
 
   const dispatch = useDispatch();
