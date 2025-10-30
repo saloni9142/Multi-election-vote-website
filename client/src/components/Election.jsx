@@ -1,7 +1,8 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { uiActions } from '../store/ui-slice'
+import { voteActions } from '../store/vote-slice'
 
 
 const Election=({_id: id, title, description, thumbnail})=> {
@@ -10,8 +11,9 @@ const Election=({_id: id, title, description, thumbnail})=> {
     // open update election modal
     const openModal =() =>{
         dispatch(uiActions.openUpdateElectionModal())
+        dispatch(voteActions.changeIdOfElectionToUpdate(id))
     }
-
+const isAdmin = useSelector(state => state?.vote?.currentVoter?.isAdmin)
 
   return (
    <article className='election'>
@@ -24,7 +26,8 @@ const Election=({_id: id, title, description, thumbnail})=> {
         <p>{description?.length> 255? description.substring(0,255)+ "...": description}</p>
         <div className='election_cta'>
             <Link to={`/elections/${id}`} className="btn sm">View</Link>
-            <button className='btn sm primary' onClick={openModal}>Edit</button>
+            <button className='btn sm primary' onClick={openModal}>Edit</button>   
+            {/* isadmin button pr add krna */}
         </div>
     </div>
    </article>
