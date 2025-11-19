@@ -59,7 +59,7 @@ setIsLoading(true)
       <div className='container elections_container'>
         <header className='elections_header'>
           <h1>Ongoing elections</h1>
-      <button className='btn primary' onClick={openModal}>create new elections</button>
+     {isAdmin && <button className='btn primary' onClick={openModal}>create new elections</button>}
         </header>
      {isLoading ? <Loader/> : <menu className='election_menu'>
           {

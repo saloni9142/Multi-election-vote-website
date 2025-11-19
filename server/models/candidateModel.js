@@ -6,7 +6,7 @@ const candidateSchema= new Schema({
     image: {type:String, required: true},
     motto: {type:String,required: true},
     voteCount: {type:Number, default:0},
-    election: [{type: Types.ObjectId,required:true, ref:"Election"}],
+    election: {type: Types.ObjectId, required:true, ref:"Election"},
    
 })
 

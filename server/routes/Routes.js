@@ -15,7 +15,7 @@ router.get('/voters/:id',authMiddleware, getVoter);
 // !election
 router.post('/elections',authMiddleware, addElection)
 router.get('/elections',authMiddleware, getElections)
-router.post('/elections/:id',authMiddleware, getElection)
+router.get('/elections/:id',authMiddleware, getElection)
 router.delete('/elections/:id',authMiddleware, removeElection)
 router.patch('/elections/:id',authMiddleware, updateElection)
 router.get('/elections/:id/candidates', getCandidatesOfElection)
@@ -28,11 +28,4 @@ router.post('/candidates',authMiddleware, addCandidate)
 router.get('/candidates/:id',authMiddleware, getCandidate)
 router.delete('/candidates/:id',authMiddleware, removeCandidate)
 router.patch('/candidates/:id', authMiddleware,voteCandidate)
-
-
-
-
-
-
-
-module.exports=router
+ module.exports=router 

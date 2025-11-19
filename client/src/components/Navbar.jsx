@@ -49,7 +49,7 @@ const Navbar = () => {
   return (
     <nav>
       <div className='container nav_container'>
-        <Link to="/" className='nav_logo'>VOTER</Link>
+        <Link to={token ? "/" : "/login"} className='nav_logo'>VOTER</Link>
         <div>
           {token && showNav && (
             <menu>

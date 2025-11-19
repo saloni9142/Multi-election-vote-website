@@ -10,4 +10,4 @@ const voterSchema= new Schema({
 
 }, {timestamps: true})
 
-module.exports=model('voters', voterSchema)
+module.exports = model('Voter', voterSchema)

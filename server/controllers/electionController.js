@@ -1,6 +1,7 @@
 const {v4 : uuid} =require("uuid")
 const cloudinary = require('../utils/cloudinary')
 const path = require("path")
+const fs = require("fs")
 const ElectionModel = require('../models/electionModel')
 const CandidateModel = require('../models/candidateModel')
 
@@ -9,19 +10,14 @@ const HttpError =require("../models/ErrorModel")
 // POST: api/elections
 // protected (only admin)
 const addElection= async(req, res,next)=>{
+   
     try{
         // only admin cand add  eletion
     if(!req.user.isAdmin){
         return next(new HttpError("only admin can perform this action.",403))
     }
-    console.log("========= DEBUG START =========");
-        console.log("req.body:", req.body);
-        console.log("req.files:", req.files);
-        console.log("Content-Type:", req.headers['content-type']);
-        console.log("========= DEBUG END =========");
 
     const {title ,description} = req.body;
-   console.log("req.body:", req.body);
     if(!title || !description){
         return next(new HttpError("fill al fields", 422))
     }
@@ -29,41 +25,52 @@ const addElection= async(req, res,next)=>{
         return next(new HttpError("choose a thumbnail",422))
     }
     const {thumbnail} = req.files;
-    // image should be less than 1mb
-    if(thumbnail.size > 2000000){
-        return next(new HttpError("file size too big. should be less than 1mb"))
+    // image should be less than 2MB
+    if(thumbnail.size > 2_000_000){
+        return next(new HttpError("file size too big. should be less than 2MB",422))
     }
-    // rename the image
+    
     let fileName = thumbnail.name;
     fileName = fileName.split(".")
     fileName= fileName[0] + uuid() +"." +fileName[fileName.length - 1]
-    // upload file  to uploads folder in project
- thumbnail.mv(path.join(__dirname, ".", 'uploads', fileName), 
-    async (err) =>{
-        if(err){
-            return next(new HttpError(err))
-        }
-        // store image on cloudinary
-        const result = await cloudinary.uploader.upload(path.join(__dirname, ".",
-            "uploads", fileName),{resource_type:"image"})
-            if(!result.secure_url){
-                return next(new HttpError("could upload image to cloudinary",422))
-            }
-            // save election to db
-            const newElection = await ElectionModel.create({title, description,
-                thumbnail: result.secure_url})
-                res.json(newElection)
-            })
+    const uploadPath = path.join(__dirname, "..", 'uploads', fileName)
     
+    try {
+        // Save file to uploads folder
+        await new Promise((resolve, reject) => {
+            thumbnail.mv(uploadPath, (err) => {
+                if(err) return reject(err)
+                resolve()
+            })
+        })
+        
+        // Upload to cloudinary
+        const result = await cloudinary.uploader.upload(uploadPath, {
+            folder: "elections",
+            resource_type: "auto"
+        });
+        
+        console.log('Cloudinary upload result:', result);
+        
+        if(!result || !result.secure_url){
+            return next(new HttpError("couldn't upload image to cloudinary",422))
+        }
+        
+        // Clean up local file
+        fs.unlinkSync(uploadPath);
 
-
-
-    } catch(error){
+        // save election to db
+        const newElection = await ElectionModel.create({title, description, thumbnail: result.secure_url})
+        return res.status(201).json(newElection)
+    } catch(err){
+        return next(new HttpError(err.message || err, 500))
+    }
+    
+      } catch(error){
         return next(new HttpError(error))
 
-    }
 }
-
+}
 
     
 // get all  election
@@ -71,15 +78,9 @@ const addElection= async(req, res,next)=>{
 // protected (only admin)
 const getElections= async(req, res,next)=>{
     try{
-        console.log("========= getElections called =========");
-        console.log("User:", req.user);
         const elections = await ElectionModel.find();
-        console.log("Elections found:", elections.length);
-        console.log("Elections data:", elections);
-        
         res.status(200).json(elections)
     } catch(error){
-        console.error("Error in getElections:", error);
         return next(new HttpError(error))
     }
 }
@@ -120,10 +121,30 @@ const getCandidatesOfElection= async(req, res,next)=>{
 const getElectionVoters= async(req, res,next)=>{
     try{
         const {id} =req.params;
-        const response = await ElectionModel.findById(id).populate('voters')
-        res.status(200).json(response.voters)
+        console.log("getElectionVoters called with id:", id);
+        
+        // Validate if id is a valid MongoDB ObjectId
+        if(!id.match(/^[0-9a-fA-F]{24}$/)){
+            console.log("Invalid ObjectId format");
+            return next(new HttpError("Invalid election ID", 400));
+        }
+        
+        console.log("Finding election with id:", id);
+        const election = await ElectionModel.findById(id).populate('voters');
+        console.log("Election found:", election ? "yes" : "no");
+        
+        if(!election){
+            console.log("Election not found");
+            return next(new HttpError("Election not found", 404));
+        }
+        
+        const voters = election.voters || [];
+        console.log("Voters count:", voters.length);
+        res.status(200).json(voters);
     } catch(error){
-        return next(new HttpError(error))
+        console.error("Error in getElectionVoters:", error.message);
+        console.error("Stack:", error.stack);
+        return next(new HttpError(error.message || "Failed to fetch voters", 500));
     }
 }
 // delete candiadte
@@ -136,7 +157,8 @@ const removeElection= async(req, res,next)=>{
         return next(new HttpError("only admin can perform this action.",403))
     }
         const {id} =req.params;
-        await ElectionModel.findByIdAndUpdate(id);
+        // actually delete the election document
+        await ElectionModel.findByIdAndDelete(id);
         // delete candidates that belong to this election
         await CandidateModel.deleteMany({election:id})
         res.status(200).json("Election deleted successfully")
@@ -159,33 +181,37 @@ const updateElection= async(req, res,next)=>{
    if(!title || !description){
     return next(new HttpError("fill in all fields",422))
    }
-   if(req.files.thumbnail){
-    const {thumbnail} =req.files;
-    // image size should be less than 1mb
-    if(thumbnail.size > 1000000){
-        return next (new HttpError("image size too big.should be less than 1mb",422))
+   // if a new thumbnail is provided, upload it and update thumbnail url
+   if(req.files && req.files.thumbnail){
+    const {thumbnail} = req.files;
+    if(thumbnail.size > 2_000_000){
+        return next (new HttpError("image size too big. should be less than 2MB",422))
     }
-    // rename the image
     let fileName = thumbnail.name;
     fileName = fileName.split(".")
     fileName= fileName[0] + uuid() +"." +fileName[fileName.length - 1]
-    thumbnail.mv(path.join(__dirname, "..", 'uploads', fileName), async (err) =>{
-        if(err){
-            return next(new HttpError(err))
+    const uploadPath = path.join(__dirname, "..", 'uploads', fileName)
+    try{
+        await new Promise((resolve, reject) => {
+            thumbnail.mv(uploadPath, (err) => {
+                if(err) return reject(err)
+                resolve()
+            })
+        })
+        const result = await cloudinary.uploader.upload(uploadPath, {resource_type:"image"})
+        if(!result || !result.secure_url){
+            return next(new HttpError("image upload to cloudinary failed",422))
         }
-        // store image on cloudinary
-        const result = await cloudinary.uploader.upload(path.join(__dirname, "..",
-            "uploads", fileName), {resource_type:"image"})
-            // check if cloudinary storage was succesfully
-            if(!result.secure_url){
-                return next(new HttpError("image upload to cloudinary was not found",422))
-            }
-
-            await ElectionModel.findByIdAndUpdate(id,{title, description,thumbnail:result.secure_url})
-            res.json("election upload successfully",200)
-
-    })
+        const updated = await ElectionModel.findByIdAndUpdate(id, {title, description, thumbnail: result.secure_url}, {new: true})
+        return res.status(200).json(updated)
+    } catch(err){
+        return next(new HttpError(err.message || err, 500))
+    }
    }
+
+   // no thumbnail provided, just update title and description
+   const updated = await ElectionModel.findByIdAndUpdate(id, {title, description}, {new: true})
+   return res.status(200).json(updated)
  } catch(error){
     return next(new HttpError(error))
  }

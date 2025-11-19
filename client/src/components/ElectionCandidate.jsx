@@ -10,7 +10,7 @@ const ElectionCandidate =({fullName, image, motto,_id:id}) =>{
 
 const deleteCandidate= async () =>{
   try{
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/candidates/${id}`,
+    const response = await axios.delete(`${process.env.REACT_APP_API_URL}/candidates/${id}`,
       {withCredentials: true, headers: {Authorization: `Bearer ${token}`}})
         navigate(0)
     

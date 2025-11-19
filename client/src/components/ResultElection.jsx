@@ -19,16 +19,16 @@ const ResultElection= ({_id: id, thumbnail,title})=>{
 const getCandidates = async () =>{
   setIsLoading(true)
   try{
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/
-      elections/${id}/candidate`,
-      {withCredentials: true,headers:
-        {Authorization:`Bearer ${token}`}})
-        const candidates = await response.data;
-        setElectionCandidates(candidates)
-        // calculate the total votes in each election
-        for(let i =0; i<candidates.length;i++){
-          setTotalVotes(prevState=>prevState += candidates[i].voteCount)
-        }
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/elections/${id}/candidates`,
+      {withCredentials: true, headers: {Authorization: `Bearer ${token}`}})
+    const candidates = await response.data;
+    setElectionCandidates(candidates)
+    // calculate the total votes in each election
+    for(let i=0; i<candidates.length;i++){
+      setTotalVotes(prevState=> prevState+= candidates[i].voteCount)
+    }
+    // const totalVotesCount = candidates.reduce((sum, candidate) => sum + (candidate.voteCount || 0), 0)
+    // setTotalVotes(totalVotesCount)
   }
  catch(error){
   console.log(error)
@@ -52,7 +52,7 @@ useEffect(()=>{
          </header>
         <ul className='result_list' >
             {
-              electionCandidates.map(candidate=><CandidateRating key={candidate.id}{...candidate} totalVotes={totalVotes}/>)
+              electionCandidates.map(candidate=><CandidateRating key={candidate._id} {...candidate} totalVotes={totalVotes}/>)
             }
         </ul>
            <Link to ={`/election/${id}/candidates`} className='btn primary full'>

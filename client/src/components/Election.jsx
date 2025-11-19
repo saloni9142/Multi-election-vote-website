@@ -5,7 +5,7 @@ import { uiActions } from '../store/ui-slice'
 import { voteActions } from '../store/vote-slice'
 
 
-const Election=({_id: id, title, description, thumbnail})=> {
+const Election=({_id:id, title, description, thumbnail})=> {
     const dispatch= useDispatch()
 
     // open update election modal
@@ -26,7 +26,7 @@ const isAdmin = useSelector(state => state?.vote?.currentVoter?.isAdmin)
         <p>{description?.length> 255? description.substring(0,255)+ "...": description}</p>
         <div className='election_cta'>
             <Link to={`/elections/${id}`} className="btn sm">View</Link>
-            <button className='btn sm primary' onClick={openModal}>Edit</button>   
+           {isAdmin && <button className='btn sm primary' onClick={openModal}>Edit</button>  } 
             {/* isadmin button pr add krna */}
         </div>
     </div>

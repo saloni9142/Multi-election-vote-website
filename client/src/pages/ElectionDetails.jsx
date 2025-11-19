@@ -65,7 +65,7 @@ const getVoters = async () =>{
 
 const deleteElection = async()=>{
     try{
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/elections/${id}`,
+    const response = await axios.delete(`${process.env.REACT_APP_API_URL}/elections/${id}`,
       {withCredentials: true, headers: {Authorization: `Bearer ${token}`}})
 
      navigate('/elections')
@@ -104,7 +104,7 @@ const openModal=() =>{
         {
           candidates.map(candidate=><ElectionCandidate key={candidate._id} {...candidate}/>)
         } 
-      <button className='add_candidate-btn'onClick={openModal} ><IoAddOutline/></button>
+      {isAdmin &&<button className='add_candidate-btn'onClick={openModal} ><IoAddOutline/></button>}
       </menu>
       <menu className='voters'>
         <h2>Voters</h2>
@@ -127,8 +127,8 @@ const openModal=() =>{
           </tbody>
         </table>
       </menu>
- <button className='btn danger full' onClick={deleteElection}>Delete Election</button>
- {/* admin add */}
+ {isAdmin && <button className='btn danger full' onClick={deleteElection}>Delete Election</button>}
+ 
     </div>
   </section>
  {addCandidateModalShowing && <AddCandidateModal/>}

@@ -239,61 +239,95 @@ nav {
 
 /* .result */
 .results {
-  margin: 5rem 0;
-  width: 58rem;
+  margin: 3rem 0;
+  width: 90%;
+  max-width: 60rem;
   margin-inline: auto;
 }
 .results_container {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
 }
 
 .result {
-  background: var(--color-gray-0);
-  border-radius: var(--radius-4);
-  margin-bottom: 1.5rem;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-3);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-gray-200);
 }
 .result_header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--color-gray-100);
-  border: 0.5rem solid var(--color-gray-0);
-  border-radius: 1.5rem 1.5rem 0 0;
+  background: linear-gradient(
+    135deg,
+    var(--color-gray-100),
+    var(--color-gray-200)
+  );
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 .result_header-image {
-  width: 3rem;
+  width: 4rem;
+  height: 4rem;
   aspect-ratio: 1/1;
   overflow: hidden;
-  border-radius: 50%;
-  margin: 1.5rem;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 .result_header h4 {
-  padding: 1.5rem;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .result_list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-top: 1rem;
+  padding: 2rem;
 }
 .result_candidate {
   display: flex;
-  align-items: center;
-  gap: 2rem;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 .result_candidate-image {
+  width: 3.5rem;
   height: 3.5rem;
+  min-width: 3.5rem;
   aspect-ratio: 1/1;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .result_candidate-info {
   width: 100%;
+  flex: 1;
+}
+
+.result_candidate-info h5 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-gray-700);
+  margin-bottom: 0.3rem;
+}
+.result_candidate-votes {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.result_candidate-info p {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
 }
 
 .result_candidate-rating {
@@ -301,16 +335,23 @@ nav {
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  margin-top: 0.7rem;
+}
+.result_candidate-percentage {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 4rem;
+  text-align: right;
 }
 .result_candidate-loader {
   display: block;
   width: 100%;
   height: 0.4rem;
-  background: var(--color-gray-100);
-  margin-top: 0.5rem;
-  border-radius: 0.5rem;
+  background: var(--color-gray-200);
+  border-radius: 0.3rem;
   overflow: hidden;
+  flex: 1;
 }
 .result_candidate-loader span {
   background: linear-gradient(
@@ -320,6 +361,14 @@ nav {
   );
   height: 100%;
   display: block;
+  border-radius: 0.3rem;
+}
+.result_candidate-percentage {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-gray-600);
+  min-width: 3rem;
+  text-align: right;
 }
 
 /* candidates */
@@ -344,35 +393,44 @@ nav {
   justify-content: center;
 }
 .candidates_container {
-  display: flex;
-  grid-template-column: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 2.5rem;
 }
 .candidate {
   background: var(--color-gray-0);
   text-align: center;
   border-radius: var(--radius-3);
-  padding-bottom: 1.2rem;
+  padding-bottom: 1.5rem;
   overflow: hidden;
   box-shadow: 0 0.5rem 0.5rem rgba(0, 0, 0, 0.1);
-  border: 0.5rem solid var(--color-gray-0);
+  border: none;
   transition: var(--transition);
 }
 
 .candidate:hover {
-  box-shadow: none;
-  border-color: var(--color-gray-100);
+  box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.15);
+  transform: translateY(-0.5rem);
 }
 .candidate_image {
   aspect-ratio: 1/1;
   overflow: hidden;
   margin-inline: auto;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   width: 100%;
+}
+.candidate h5 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-gray-700);
+  margin-bottom: 0.5rem;
 }
 .candidate small {
   display: block;
-  margin: 0.5rem 0 1rem;
+  margin: 0.5rem 1rem 1.2rem;
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+  line-height: 1.4;
 }
 
 /* !modal */

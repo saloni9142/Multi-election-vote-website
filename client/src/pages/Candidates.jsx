@@ -24,7 +24,7 @@ useEffect(()=>{
   const voteCandidateModalShowing= useSelector(state=> state.ui.voteCandidateModalShowing)
   
   const voterId = useSelector(state => state?.vote?.currentVoter?.id)
-  const voteElections = useSelector(state => state?.vote?.currentVoter?.id.voterElections)
+  const votedElections = useSelector(state => state?.vote?.currentVoter?.id.votedElections)
   // get candidtes that belong to the elctions
   const getCandidates = async() =>{
     try{
@@ -39,7 +39,7 @@ useEffect(()=>{
   }
 
   
-
+// check if voter has alraedy voted
     const getVoter = async()=>{
       try{
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/voters/

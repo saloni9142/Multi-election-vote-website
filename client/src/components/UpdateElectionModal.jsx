@@ -14,6 +14,7 @@ const UpdateElectionModal = () => {
     const dispatch=useDispatch()
         const idOfElectionToUpdate = useSelector(state => state?.vote?.idOfElectionToUpdate)
         const token =useSelector(state => state?.vote?.currentVoter?.token)
+        console.log(idOfElectionToUpdate)
         const navigate=useNavigate()
 
     // close update election modal
@@ -53,7 +54,7 @@ const UpdateElectionModal = () => {
             electionData.set('description',description)
             electionData.set('thumbnail',thumbnail)
             electionData.set('title',title)
-            const response= await axios.get(`${process.env.REACT_APP_API_URL}/elections/${idOfElectionToUpdate}`,electionData,
+            const response= await axios.patch(`${process.env.REACT_APP_API_URL}/elections/${idOfElectionToUpdate}`,electionData,
                 {withCredentials : true, headers: {Authorization: `Bearer ${token}`}}
             )
             closeModal()

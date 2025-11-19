@@ -33,7 +33,7 @@ const addCandidate = async(req, res, next) => {
         const {image} = req.files;
         
         // check file size
-        if(image.size > 1000000) {
+        if(image.size>1000000) {
             return next(new HttpError("image size should be less than 1mb", 422))
         }
         
@@ -122,7 +122,7 @@ const getCandidate= async(req, res,next)=>{
     try{
         const {id} =req.params;
         const candiadte= await CandidateModel.findById(id)
-         res.json("get candidate")
+         res.json(candiadte)
     } catch(error) {
         return next(new HttpError(error))
     }
@@ -140,21 +140,41 @@ const removeCandidate= async(req, res,next)=>{
             return next(new HttpError("only admin can perform this action.", 403))
         }
     const {id} =req.params;
-    let currentCandidate= await CandidateModel.findById(id).populate('election')
+    console.log("Attempting to delete candidate:", id);
+    
+    const currentCandidate= await CandidateModel.findById(id);
     if(!currentCandidate){
+        console.log("Candidate not found:", id);
         return next(new HttpError("could not delete candidate",422))
-    } else{
-        const sess = await mongoose.startSession()
-        sess.startTransaction()
-        await currentCandidate.deleteOne({session:sess})
-        currentCandidate.election.candidates.pull(currentCandidate);
-        await currentCandidate.election.save({session:sess})
-        await sess.commitTransaction()
-        res.status(200).json("Candidate deletd succesfully")
-
+    }
+    
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    
+    try {
+        // Delete candidate from database
+        await CandidateModel.findByIdAndDelete(id, {session: sess});
+        
+        // Remove candidate ID from election's candidates array
+        const electionId = currentCandidate.election;
+        await ElectionModel.findByIdAndUpdate(
+            electionId,
+            {$pull: {candidates: id}},
+            {session: sess}
+        );
+        
+        await sess.commitTransaction();
+        console.log("Candidate deleted successfully:", id);
+        res.status(200).json("Candidate deleted successfully");
+    } catch (error) {
+        await sess.abortTransaction();
+        throw error;
+    } finally {
+        sess.endSession();
     }
 } catch (error){
-    return next(new HttpError(error))
+    console.error("Error in removeCandidate:", error.message);
+    return next(new HttpError(error.message || "Failed to delete candidate", 500))
 }
 }
 
@@ -176,7 +196,7 @@ const voteCandidate= async(req, res,next)=>{
         const sess= await mongoose.startSession()
         sess.startTransaction();
         // get the current voter
-        let voter = await VoterModel.findById(req.user.id)
+        let voter = await VoterModel.findById(currentVoterId)
         await voter.save({session: sess})
         // get selected election
         let election = await ElectionModel.findById(selectedElection);

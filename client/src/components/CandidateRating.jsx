@@ -9,7 +9,7 @@ const CandidateRating=({fullName, image, voteCount, totalVotes})=> {
         <div className='result_candidate-info'>
             <div>
               <h5>{fullName}</h5>
-            <small>{`${voteCount} ${voteCount==1? "vote": "votes"}`}</small>
+            <small className='result_candidate-votes'>{`${voteCount} ${voteCount==1? "vote": "votes"}`}</small>
         </div>
             </div>
         <div className='result_candidate-rating'>
@@ -21,7 +21,7 @@ const CandidateRating=({fullName, image, voteCount, totalVotes})=> {
 ></span>
           </div>
         
-  <small>
+  <small className='result_candidate-percentage'>
   {`${voteCount > 0 ? ((voteCount / totalVotes) * 100).toFixed(2) : "0"}%`}
 </small>
         </div>
